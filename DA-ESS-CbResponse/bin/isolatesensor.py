@@ -144,9 +144,7 @@ if __name__ == "__main__":
 
     try:
         logger = ModularAction.setup_logger('isolate_modalert')
-        logger.info("Calling IsolateSensorAction.__init__")
         modaction = IsolateSensorAction(sys.stdin.read(), logger, 'isolatesensor')
-        logger.info("Returned IsolateSensorAction.__init__")
     except Exception as e:
         logger.critical(str(e))
         sys.exit(3)

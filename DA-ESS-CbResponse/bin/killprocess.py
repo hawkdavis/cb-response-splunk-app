@@ -109,9 +109,7 @@ if __name__ == "__main__":
 
     try:
         logger = ModularAction.setup_logger('killprocess_modalert')
-        logger.info("Calling KillProcessAction.__init__")
         modaction = KillProcessAction(sys.stdin.read(), logger, 'killprocess')
-        logger.info("Returned KillProcessAction.__init__")
     except Exception as e:
         logger.critical(str(e))
         sys.exit(3)

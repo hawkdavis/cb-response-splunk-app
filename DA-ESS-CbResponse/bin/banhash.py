@@ -104,9 +104,7 @@ if __name__ == "__main__":
 
     try:
         logger = ModularAction.setup_logger('banhash_modalert')
-        logger.info("Calling BanHashAction.__init__")
         modaction = BanHashAction(sys.stdin.read(), logger, 'banhash')
-        logger.info("Returned BanHashAction.__init__")
     except Exception as e:
         logger.critical(str(e))
         sys.exit(3)
