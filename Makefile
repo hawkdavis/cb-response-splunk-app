@@ -25,4 +25,4 @@ $(APPNAME).spl: clean
 	find build/$(APPNAME) -name ".*" -delete
 	find build/$(APPNAME) -name "*.pyc" -delete
 
-	(cd build && COPYFILE_DISABLE=1 tar -cvzf $(APPNAME).spl $(APPNAME))
+	(cd build && gtar -cvzf $(APPNAME).spl $(APPNAME))
