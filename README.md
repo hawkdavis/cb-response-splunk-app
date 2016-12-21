@@ -7,7 +7,7 @@ detect and take action upon endpoint activity from directly within Splunk.
 
 ## Requirements
 
-This app requires a functional Carbon Black server, version 5.1 or above, and Splunk version 6.3 or above.
+This app requires a functional Carbon Black server, version 5.1 or above, and Splunk version 6.4 or above.
 The app works with Cb Response clusters. Currently the Cb Response Unified View (Federated) server is not
 supported.
 
