@@ -44,17 +44,6 @@ The Cb Response app for Splunk uses Splunk’s encrypted credential storage faci
 If for any reason you have to change the API key or Cb server URL after the Splunk app has been set up once, visit the setup page
 by going to `https://<SPLUNK_SERVER>/en-US/app/DA-ESS-CbResponse/setup_page`.
 
-### Splunk Distributed Environment Configuration
-
-It is recommended to install this app on a search head and not have it replicate to indexers.
-To prevent replication to indexers add the following stanza and variables to your distsearch.conf.
-Located at SPLUNK_HOME/etc/system/local/distsearch.conf
-
-        [replicationBlacklist]
-        carbonblack = apps/DA-ESS-CbResponse/...
-
-http://docs.splunk.com/Documentation/ES/latest/Install/InstallTechnologyAdd-ons#Import_add-ons_with_a_different_naming_convention.
-
 ## Features
 
 * **Dashboards**: These pre-built dashboards provide you a quick check on the health of your Cb server,
