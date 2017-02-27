@@ -46,16 +46,18 @@ class CbSearchCommand(GeneratingCommand):
         super(CbSearchCommand, self).__init__()
         self.setup_complete = False
         self.cb = None
+        self.cb_url = "<unknown>"
 
     def error_event(self, comment):
         error_text = {"Error": comment}
 
-        return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(), 'source': self.cb.credentials.url,
+        return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(), 'source': self.cb_url,
                 '_raw': json.dumps(error_text)}
 
     def prepare(self):
         try:
             self.cb = get_cbapi(self.service)
+            self.cb_url = self.cb.credentials.url
         except KeyError:
             self.logger.exception("API key not set")
         except ApiError:
@@ -81,7 +83,7 @@ class CbSearchCommand(GeneratingCommand):
         rawdata = dict( (field_name, getattr(data, field_name, "")) for field_name in self.field_names)
         squashed_data = self.squash_data( self.process_data(rawdata) )
         return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(),
-                'source': self.cb.credentials.url, '_raw': squashed_data}
+                'source': self.cb_url, '_raw': squashed_data}
 
     def generate(self):
         try:
