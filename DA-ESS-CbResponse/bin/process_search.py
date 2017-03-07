@@ -1,4 +1,4 @@
-from cbhelpers import CbSearchCommand
+from cbhelpers import CbSearchCommand, CbSearchCommand2
 from cbapi.response import Process
 
 import sys
@@ -7,8 +7,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
-@Configuration(distributed=False)
-class ProcessSearchCommand(CbSearchCommand):
+@Configuration()
+class ProcessSearchCommand(CbSearchCommand2):
     field_names = ['cmdline',
                    'comms_ip',
                    'hostname',
