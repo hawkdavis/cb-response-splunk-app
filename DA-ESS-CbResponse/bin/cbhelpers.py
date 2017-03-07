@@ -89,6 +89,7 @@ class CbSearchCommand(GeneratingCommand):
     def generate(self):
         if not self.setup_complete:
             yield self.error_event("Error: {0}".format(self.error_text))
+            return                                    # explicitly stop the generator on prepare() error
 
         try:
             query = self.cb.select(self.search_cls)
