@@ -1,6 +1,6 @@
 from cbapi import CbApi
 from cbapi.response import CbEnterpriseResponseAPI
-from cbapi.errors import ApiError
+from cbapi.errors import ApiError, ServerError
 
 from splunklib.searchcommands import GeneratingCommand, Option, Configuration
 import json
@@ -47,6 +47,7 @@ class CbSearchCommand(GeneratingCommand):
         self.setup_complete = False
         self.cb = None
         self.cb_url = "<unknown>"
+        self.error_text = "<unknown>"
 
     def error_event(self, comment):
         error_text = {"Error": comment}
@@ -59,11 +60,11 @@ class CbSearchCommand(GeneratingCommand):
             self.cb = get_cbapi(self.service)
             self.cb_url = self.cb.credentials.url
         except KeyError:
-            self.logger.exception("API key not set")
-        except ApiError:
-            self.logger.exception("Could not contact Cb Response server")
-        except Exception:
-            self.logger.exception("Error reading API key from credential storage")
+            self.error_text = "API key not set. Check that the Cb Response server is set up in the Cb Response App for Splunk configuration page."
+        except (ApiError, ServerError) as e:
+            self.error_text = "Could not contact Cb Response server: {0}".format(str(e))
+        except Exception as e:
+            self.error_text = "Unknown error reading API key from credential storage: {0}".format(str(e))
         else:
             self.setup_complete = True
 
@@ -86,6 +87,9 @@ class CbSearchCommand(GeneratingCommand):
                 'source': self.cb_url, '_raw': squashed_data}
 
     def generate(self):
+        if not self.setup_complete:
+            yield self.error_event("Error: {0}".format(self.error_text))
+
         try:
             query = self.cb.select(self.search_cls)
             if self.query:
