@@ -7,6 +7,10 @@ import json
 import time
 import logging
 
+class CredentialMissingError(Exception):
+    pass
+
+
 try:
     from splunk.clilib.bundle_paths import make_splunkhome_path
 except ImportError:
@@ -18,6 +22,9 @@ def get_creds(splunk_service):
     token = api_credentials.clear_password.split("``splunk_cred_sep``")[1]
 
     cb_server = splunk_service.confs["DA-ESS-CbResponse_customized"]["cburl"].content['content']
+
+    if not cb_server or not token:
+        raise CredentialMissingError("Please visit the Set Up Page for the Cb Response App for Splunk to set the URL and API key for your Cb Response server.")
 
     return cb_server, token
 
@@ -63,6 +70,8 @@ class CbSearchCommand(GeneratingCommand):
             self.error_text = "API key not set. Check that the Cb Response server is set up in the Cb Response App for Splunk configuration page."
         except (ApiError, ServerError) as e:
             self.error_text = "Could not contact Cb Response server: {0}".format(str(e))
+        except CredentialMissingError as e:
+            self.error_text = "Setup not complete: {0}".format(str(e))
         except Exception as e:
             self.error_text = "Unknown error reading API key from credential storage: {0}".format(str(e))
         else:
