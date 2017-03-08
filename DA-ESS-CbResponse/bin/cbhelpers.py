@@ -111,6 +111,7 @@ class CbSearchCommand(GeneratingCommand):
 
         except Exception as e:
             yield self.error_event("error searching for {0} in Cb Response: {1}".format(self.query, str(e)))
+            return
 
 
 ##  ---------- fixup -------------
@@ -126,22 +127,27 @@ class CbSearchCommand2(EventingCommand):
         super(CbSearchCommand2, self).__init__()
         self.setup_complete = False
         self.cb = None
+        self.cb_url = "<unknown>"
+        self.error_text = "<unknown>"
 
     def error_event(self, comment):
         error_text = {"Error": comment}
 
-        return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(), 'source': self.cb.credentials.url,
+        return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(), 'source': self.cb_url,
                 '_raw': json.dumps(error_text)}
 
     def prepare(self):
         try:
             self.cb = get_cbapi(self.service)
+            self.cb_url = self.cb.credentials.url
         except KeyError:
-            self.logger.exception("API key not set")
-        except ApiError:
-            self.logger.exception("Could not contact Cb Response server")
-        except Exception:
-            self.logger.exception("Error reading API key from credential storage")
+            self.error_text = "API key not set. Check that the Cb Response server is set up in the Cb Response App for Splunk configuration page."
+        except (ApiError, ServerError) as e:
+            self.error_text = "Could not contact Cb Response server: {0}".format(str(e))
+        except CredentialMissingError as e:
+            self.error_text = "Setup not complete: {0}".format(str(e))
+        except Exception as e:
+            self.error_text = "Unknown error reading API key from credential storage: {0}".format(str(e))
         else:
             self.setup_complete = True
 
@@ -161,9 +167,13 @@ class CbSearchCommand2(EventingCommand):
         rawdata = dict( (field_name, getattr(data, field_name, "")) for field_name in self.field_names)
         squashed_data = self.squash_data( self.process_data(rawdata) )
         return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(),
-                'source': self.cb.credentials.url, '_raw': squashed_data}
+                'source': self.cb_url, '_raw': squashed_data}
 
     def transform(self, results):
+        if not self.setup_complete:
+            yield self.error_event("Error: {0}".format(self.error_text))
+            return                                    # explicitly stop the generator on prepare() error
+
         try:
             query = self.cb.select(self.search_cls)
             if self.query:
@@ -175,6 +185,7 @@ class CbSearchCommand2(EventingCommand):
 
         except Exception as e:
             yield self.error_event("error searching for {0} in Cb Response: {1}".format(self.query, str(e)))
+            return
 
 
 
