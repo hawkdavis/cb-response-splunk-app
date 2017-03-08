@@ -300,3 +300,9 @@ This software also includes the following:
         # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
         # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
+
+* tab_splunktalib Python library 0.9
+
+    This software was bundled with the Splunk App Builder Add-On, covered by the Splunk
+    license agreement located at https://www.splunk.com/en_us/legal/splunk-software-license-agreement.html.
+    
