@@ -9,6 +9,7 @@
         <view name="endpoint-status" default="false"/>
         <view name="network-map" default="false"/>
         <view name="binary-status" default="false"/>
+        <view name="system-check" default="false"/>
     </collection>
 
 
