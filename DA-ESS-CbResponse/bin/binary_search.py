@@ -1,4 +1,4 @@
-from cbhelpers import CbSearchCommand
+from cbhelpers import CbSearchCommand, CbSearchCommand2
 from cbapi.response import Binary
 
 import sys
@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 @Configuration()
-class BinarySearchCommand(CbSearchCommand):
+class BinarySearchCommand(CbSearchCommand2):
     field_names = ['digsig_publisher', 'digsig_result', 'digsig_sign_time', 'host_count', 'is_executable_image',
                    'last_seen', 'original_filename', 'os_type', 'product_name', 'product_version', 'md5']
     search_cls = Binary

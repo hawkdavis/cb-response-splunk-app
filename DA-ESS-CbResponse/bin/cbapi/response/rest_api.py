@@ -59,6 +59,9 @@ class CbEnterpriseResponseAPI(BaseAPI):
         super(CbEnterpriseResponseAPI, self).__init__(product_name="response", *args, **kwargs)
 
         self._parsed_url = urllib.parse.urlparse(self.url)
+        if self._parsed_url.scheme != 'https':
+            raise ApiError("CbAPI will not connect to a Cb Response server through HTTP")
+
         try:
             self.server_info = self.info()
         except UnauthorizedError:

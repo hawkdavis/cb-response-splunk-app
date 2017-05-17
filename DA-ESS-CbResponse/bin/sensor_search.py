@@ -1,14 +1,15 @@
-from cbhelpers import CbSearchCommand
+from cbhelpers import CbSearchCommand, CbSearchCommand2
 from cbapi.response import Sensor
 
 import sys
-from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option
+from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, EventingCommand
 import logging
 log = logging.getLogger(__name__)
 
 
+#@Configuration(distributed=False)
 @Configuration()
-class SensorSearchCommand(CbSearchCommand):
+class SensorSearchCommand(CbSearchCommand2):
     field_names = [
                     'build_version_string',
                     'clock_delta',
