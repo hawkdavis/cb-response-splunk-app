@@ -8,8 +8,79 @@ import platform
 import os
 import threading
 import logging
+import json
+from time import sleep
+
+from cbapi.six.moves import SimpleHTTPServer, BaseHTTPServer
+from cbapi.six.moves import urllib
+
+import ssl
+
 
 log = logging.getLogger(__name__)
+
+
+class FileEventSource(threading.Thread):
+    def __init__(self, cb, filename):
+        super(FileEventSource, self).__init__()
+        self.daemon = True
+
+        self._done = False
+        self._cb = cb
+
+        self._fp = open(filename, "rb")
+        log.debug("Opened %s" % filename)
+
+    def run(self):
+        while not self._fp.closed:
+            l = self._fp.readline()
+            if l == "":
+                # wait for new events
+                sleep(1)
+                continue
+
+            try:
+                msg = json.loads(l)
+                routing_key = msg.get("type")
+                # log.debug("Received message with routing key %s" % routing_key)
+                registry.eval_callback(routing_key, l, self._cb)
+            except:
+                pass
+
+    def stop(self):
+        self._fp.close()
+
+
+class EventForwarderHTTPSource(threading.Thread):
+    def __init__(self, cb, listening_address, **kwargs):
+        super(EventForwarderHTTPSource, self).__init__()
+        self.daemon = True
+
+        http_parts = urllib.parse.urlparse(listening_address)
+        addr_parts = http_parts.netloc.split(":")
+        listening_host = addr_parts[0]
+        if len(addr_parts) == 2:
+            port = int(addr_parts[1])
+            listening_host = addr_parts[0]
+        else:
+            if http_parts.scheme == "https":
+                port = 443
+            else:
+                port = 80
+
+        self.listening_address = listening_address
+        self.httpd = BaseHTTPServer.HTTPServer((listening_host, port), SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+        if http_parts.scheme == "https":
+            keyfile = kwargs.get("keyfile", None)
+            certfile = kwargs.get("certfile", None)
+            if not keyfile or not certfile:
+                raise CredentialError("Need to specify 'keyfile' and 'certfile' for HTTPS")
+            self.httpd.socket = ssl.wrap_socket (self.httpd.socket, certfile=certfile, keyfile=keyfile,
+                                                 server_side=True)
+
+    def run(self):
+        self.httpd.serve_forever()
 
 
 # This class is based on the pika asynchronous consumer example at
@@ -26,6 +97,7 @@ class RabbitMQEventSource(threading.Thread):
         self._closing = False
         self._consumer_tag = None
         self._auto_ack = True
+        self._consuming = False
 
         self._cb = cb
         creds = cb.credentials
@@ -45,8 +117,7 @@ class RabbitMQEventSource(threading.Thread):
 
         self.QUEUE = "cbapi-event-handler-{0}-{1}".format(platform.uname()[1], os.getpid())
         self.EXCHANGE = "api.events"
-        # TODO: this needs to be tweaked so we don't listen to ALL events all the time
-        self.ROUTING_KEY = "#"
+        self.ROUTING_KEYS = registry.event_types
         self.EXCHANGE_TYPE = "topic"
 
     def connect(self):
@@ -209,10 +280,11 @@ class RabbitMQEventSource(threading.Thread):
         :param pika.frame.Method method_frame: The Queue.DeclareOk frame
 
         """
-        log.debug('Binding %s to %s with %s',
-                    self.EXCHANGE, self.QUEUE, self.ROUTING_KEY)
-        self._channel.queue_bind(self.on_bindok, self.QUEUE,
-                                 self.EXCHANGE, self.ROUTING_KEY)
+        for routing_key in self.ROUTING_KEYS:
+            log.debug('Binding %s to %s with %s',
+                        self.EXCHANGE, self.QUEUE, routing_key)
+            self._channel.queue_bind(self.on_bindok, self.QUEUE,
+                                     self.EXCHANGE, routing_key)
 
     def on_bindok(self, unused_frame):
         """Invoked by pika when the Queue.Bind method has completed. At this
@@ -235,10 +307,12 @@ class RabbitMQEventSource(threading.Thread):
         will invoke when a message is fully received.
 
         """
-        log.debug('Issuing consumer related RPC commands')
-        self.add_on_cancel_callback()
-        self._consumer_tag = self._channel.basic_consume(self.on_message,
-                                                         self.QUEUE, no_ack=self._auto_ack)
+        if not self._consuming:
+            log.debug('Issuing consumer related RPC commands')
+            self.add_on_cancel_callback()
+            self._consumer_tag = self._channel.basic_consume(self.on_message,
+                                                             self.QUEUE, no_ack=self._auto_ack)
+            self._consuming = True
 
     def add_on_cancel_callback(self):
         """Add a callback that will be invoked if RabbitMQ cancels the consumer
@@ -347,7 +421,7 @@ class RabbitMQEventSource(threading.Thread):
         log.debug('Received message # %s with properties %s',
                     basic_deliver.delivery_tag, properties)
 
-        registry.eval_callback("event", body, self._cb)
+        registry.eval_callback(basic_deliver.routing_key, body, self._cb)
 
         if not self._auto_ack:
             self.acknowledge_message(basic_deliver.delivery_tag)

@@ -1,4 +1,4 @@
-from cbhelpers import CbSearchCommand, CbSearchCommand2
+from cbhelpers import CbSearchCommand2
 from cbapi.response import Process
 
 import sys

@@ -3,9 +3,10 @@
 from ..oldmodels import BaseModel, immutable, MutableModel
 from ..models import MutableBaseModel, CreatableModelMixin, NewBaseModel
 from contextlib import closing
+from distutils.version import LooseVersion
 
 from zipfile import ZipFile
-import six
+import cbapi.six as six
 if six.PY3:
     from io import BytesIO as StringIO
 else:
@@ -17,6 +18,14 @@ class EnforcementLevel:
     LevelMedium = 30
     LevelLow = 40
     LevelNone = 80
+
+
+class AppCatalog(NewBaseModel):
+    urlobject = "/api/bit9platform/v1/appCatalog"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
 
 
 class ApprovalRequest(MutableModel):
@@ -53,6 +62,14 @@ class ApprovalRequest(MutableModel):
     @property
     def computer(self):
         return self._join(Computer, "computerId")
+
+
+class AppTemplate(MutableBaseModel):
+    urlobject = "/api/bit9platform/v1/appTemplate"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
 
 
 class Certificate(MutableModel):
@@ -116,6 +133,22 @@ class Connector(MutableBaseModel, CreatableModelMixin):
         return self._cb.select(PendingAnalysis).where("connectorId:{0:d}".format(self.id))
 
 
+class DriftReport(NewBaseModel):
+    urlobject = "/api/bit9platform/v1/driftReport"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
+class DriftReportContents(NewBaseModel):
+    urlobject = "/api/bit9platform/v1/driftReportContents"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
 class Event(NewBaseModel):
     urlobject = "/api/bit9platform/v1/event"
 
@@ -134,8 +167,7 @@ class FileAnalysis(MutableModel):
         super(FileAnalysis, self).__init__(cb, model_unique_id, initial_data)
 
 
-@immutable
-class FileCatalog(BaseModel):
+class FileCatalog(MutableBaseModel):
     urlobject = "/api/bit9platform/v1/fileCatalog"
 
     def __init__(self, cb, model_unique_id, initial_data=None):
@@ -160,6 +192,7 @@ class FileCatalog(BaseModel):
 
 class FileInstance(MutableBaseModel):
     urlobject = "/api/bit9platform/v1/fileInstance"
+    _change_object_http_method = "POST"
 
     def __init__(self, cb, model_unique_id, initial_data=None):
         super(FileInstance, self).__init__(cb, model_unique_id, initial_data)
@@ -189,11 +222,34 @@ class FileInstanceGroup(BaseModel):
         super(FileInstanceGroup, self).__init__(cb, model_unique_id, initial_data)
 
 
-class FileRule(MutableModel):
+class FileRule(MutableBaseModel, CreatableModelMixin):
     urlobject = "/api/bit9platform/v1/fileRule"
+    swagger_meta_file = "protection/models/fileRule.yaml"
 
-    def __init__(self, cb, model_unique_id, initial_data=None):
-        super(FileRule, self).__init__(cb, model_unique_id, initial_data)
+    StateUnapproved = 1
+    StateApproved = 2
+    StateBanned = 3
+
+    SourceTypeManual = 1
+    SourceTypeTrustedDirectory = 2
+    SourceTypeReputation = 3
+    SourceTypeImported = 4
+    SourceTypeExternal = 5
+    SourceTypeEventRule = 6
+    SourceTypeApplicationTemplate = 7
+    SourceTypeUnifiedManagement = 8
+
+    PlatformWindows = 1
+    PlatformMac = 2
+    PlatformLinux = 4
+
+    @property
+    def fileCatalog(self):
+        return self._join(FileCatalog, "fileCatalogId")
+
+    @property
+    def createdByUser(self):
+        return self._join(User, "createdByUserId")
 
 
 class FileUpload(MutableModel):
@@ -209,6 +265,14 @@ class FileUpload(MutableModel):
             zf = ZipFile(z)
             fp = zf.open(zf.filelist[0], "r")
             return fp
+
+
+class GrantedUserPolicyPermission(NewBaseModel):
+    urlobject = "/api/bit9platform/v1/grantedUserPolicyPermission"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
 
 
 @immutable
@@ -285,8 +349,9 @@ class PendingAnalysis(MutableModel):
         return getattr(self, "md5", None) or getattr(self, "sha1", None) or getattr(self, "sha256", None)
 
 
-class Policy(NewBaseModel):
+class Policy(MutableBaseModel, CreatableModelMixin):
     urlobject = "/api/bit9platform/v1/policy"
+    swagger_meta_file = "protection/models/policy.yaml"
 
 
 class Publisher(MutableModel):
@@ -294,6 +359,22 @@ class Publisher(MutableModel):
 
     def __init__(self, cb, model_unique_id, initial_data=None):
         super(Publisher, self).__init__(cb, model_unique_id, initial_data)
+
+
+class PublisherCertificate(NewBaseModel):
+    urlobject = "/api/bit9platform/v1/publisherCertificate"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
+class ScriptRule(MutableBaseModel):
+    urlobject = "/api/bit9platform/v1/scriptRule"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
 
 
 @immutable
@@ -318,4 +399,38 @@ class Updater(MutableModel):
     def __init__(self, cb, model_unique_id, initial_data=None):
         super(Updater, self).__init__(cb, model_unique_id, initial_data)
 
+
+class TrustedDirectory(MutableBaseModel):
+    urlobject = "/api/bit9platform/v1/trustedDirectory"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
+class TrustedUser(MutableBaseModel, CreatableModelMixin):
+    urlobject = "/api/bit9platform/v1/trustedUser"
+    swagger_meta_file = "protection/models/trustedUser.yaml"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
+class User(MutableBaseModel, CreatableModelMixin):
+    urlobject = "/api/bit9platform/v1/user"
+    swagger_meta_file = "protection/models/user.yaml"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
+
+
+class UserGroup(MutableBaseModel, CreatableModelMixin):
+    urlobject = "/api/bit9platform/v1/userGroup"
+    swagger_meta_file = "protection/models/userGroup.yaml"
+
+    @classmethod
+    def _minimum_server_version(cls):
+        return LooseVersion("8.0")
 

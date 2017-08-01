@@ -1,19 +1,23 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
-
-import six
-
+import copy
+import cbapi.six as six
 from .errors import ApiError, MoreThanOneResultError
-from six import iteritems
-from six.moves import range
+from cbapi.six import iteritems
+from cbapi.six.moves import range
 import logging
+
+
 log = logging.getLogger(__name__)
 
 
 class BaseQuery(object):
     def __init__(self, query=None):
         self._query = query
+
+    def _clone(self):
+        return self.__class__(self._query)
 
     def all(self):
         return self._perform_query()
@@ -33,7 +37,10 @@ class BaseQuery(object):
         return res[0]
 
     def _perform_query(self):
-        return None
+        # This has the effect of generating an empty iterator.
+        # See http://stackoverflow.com/questions/13243766/python-empty-generator-function
+        return
+        yield
 
     def __len__(self):
         return 0
@@ -59,6 +66,16 @@ class SimpleQuery(BaseQuery):
         self._results = []
         self._query = {}
         self._sort_by = None
+
+    def _clone(self):
+        nq = self.__class__(self._doc_class, self._cb)
+        nq._urlobject = self._urlobject
+        nq._full_init = self._full_init
+        nq._results = self._results[::]
+        nq._query = copy.deepcopy(self._query)
+        nq._sort_by = self._sort_by
+
+        return nq
 
     def _match_query(self, i):
         for k, v in iteritems(self._query):
@@ -105,19 +122,20 @@ class SimpleQuery(BaseQuery):
         if self._query:
             raise ApiError("Cannot have multiple 'where' clauses")
 
-        field, value = new_query.split(':')
-        self._query[field] = value
-
-        self._full_init = False
-        return self
+        nq = self._clone()
+        field, value = new_query.split(':', 1)
+        nq._query[field] = value
+        nq._full_init = False
+        return nq
 
     def _perform_query(self):
         for item in self.results:
             yield item
 
     def sort(self, new_sort):
-        self._sort_by = new_sort
-        return self
+        nq = self._clone()
+        nq._sort_by = new_sort
+        return nq
 
 
 class PaginatedQuery(BaseQuery):
@@ -128,6 +146,12 @@ class PaginatedQuery(BaseQuery):
         # TODO: this should be subject to a TTL
         self._total_results = 0
         self._count_valid = False
+        self._batch_size = 100
+
+    def _clone(self):
+        nq = self.__class__(self._doc_class, self._cb, query=self._query)
+        nq._batch_size = self._batch_size
+        return nq
 
     def __len__(self):
         if self._count_valid:
@@ -186,3 +210,7 @@ class PaginatedQuery(BaseQuery):
         for item in self._search(start=start, rows=numrows):
             yield self._doc_class.new_object(self._cb, item)
 
+    def batch_size(self, new_batch_size):
+        nq = self._clone()
+        nq._batch_size = new_batch_size
+        return nq
