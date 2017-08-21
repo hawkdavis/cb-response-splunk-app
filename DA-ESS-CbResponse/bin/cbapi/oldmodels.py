@@ -6,15 +6,11 @@ from functools import wraps
 import time
 import json
 
-from six import python_2_unicode_compatible, iteritems
+from cbapi.six import python_2_unicode_compatible, iteritems
 
 from .errors import ServerError
 import logging
 log = logging.getLogger(__name__)
-
-
-class UnimplementedError(Exception):
-    pass
 
 
 class CreatableModelMixin(object):
@@ -47,7 +43,7 @@ def immutable(cls):
 
 @python_2_unicode_compatible
 class BaseModel(object):
-    def __init__(self, cb, model_unique_id=None, initial_data=None):
+    def __init__(self, cb, model_unique_id=None, initial_data=None, force_init=False):
         self._cb = cb
         if model_unique_id is not None:
             self._model_unique_id = str(model_unique_id)
@@ -63,6 +59,9 @@ class BaseModel(object):
             self._last_refresh_time = time.time()
 
         self._base_initialized = True
+
+        if force_init:
+            self.refresh()
 
     def _set_initial_data(self, initial_data):
         if initial_data:
@@ -88,10 +87,10 @@ class BaseModel(object):
         """
         self._retrieve_cb_info()
 
-    def _retrieve_cb_info(self):
+    def _retrieve_cb_info(self, query_parameters=None):
         if self._model_unique_id is not None:
             request_uri = self._build_api_request_uri()
-            self._parse(self._cb.get_object(request_uri))
+            self._parse(self._cb.get_object(request_uri, query_parameters=query_parameters))
             self._full_init = True
             self._last_refresh_time = time.time()
 
@@ -109,11 +108,10 @@ class BaseModel(object):
     def webui_link(self):
         """Returns a link associated with this object in the Carbon Black user interface.
 
-        :returns: URL that can be used to view the object in the Carbon Black web user interface
-        :raises UnimplementedError: if the Model does not support generating a Web user interface URL
+        :returns: URL that can be used to view the object in the Carbon Black web user interface or None if the Model
+        does not support generating a Web user interface URL
         """
-
-        raise UnimplementedError()
+        return None
 
     def __dir__(self):
         if not self._full_init:
@@ -134,15 +132,7 @@ class BaseModel(object):
 
     def _attribute(self, attrname, default=None):
         if attrname in self._info:
-            # workaround for CbER where parent_unique_id is returned as null
-            # string as part of a query result. in this case we need to do a
-            # full_init. TODO: add this to quirks when this is fixed by Cb.
-            if attrname in ['parent_unique_id',
-                            'parent_name',
-                            'parent_md5'] and not self._full_init:
-                self._retrieve_cb_info()
-            else:
-                return self._info[attrname]
+            return self._info[attrname]
 
         if not self._full_init:
             # fill in info from Cb
@@ -156,12 +146,16 @@ class BaseModel(object):
 
         raise AttributeError()
 
+    def get(self, attrname, default_val=None):
+        try:
+            return self._attribute(attrname)
+        except AttributeError:
+            return default_val
+
     def __str__(self):
         ret = '{0:s}.{1:s}:\n'.format(self.__class__.__module__, self.__class__.__name__)
-        try:
-            ret += "-> available via web UI at %s" % self.webui_link
-        except UnimplementedError:
-            pass
+        if self.webui_link:
+            ret += "-> available via web UI at %s\n" % self.webui_link
 
         ret += u'\n'.join(['%-20s : %s' %
                            (a, getattr(self, a, "")) for a in self._stat_titles])

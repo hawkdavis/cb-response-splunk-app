@@ -1,7 +1,7 @@
-from six.moves.configparser import RawConfigParser
+from cbapi.six.moves.configparser import RawConfigParser
 import os
 import attrdict
-import six
+import cbapi.six as six
 
 from .errors import CredentialError
 
@@ -45,17 +45,20 @@ class Credentials(attrdict.AttrDict):
 
 class CredentialStore(object):
     def __init__(self, product_name, **kwargs):
-        if product_name not in ("response", "protection"):
+        if product_name not in ("response", "protection", "defense"):
             raise CredentialError("Product name {0:s} not valid")
 
+        self.credential_search_path = [
+            os.path.join(os.path.sep, "etc", "carbonblack", "credentials.%s" % product_name),
+            os.path.join(os.path.expanduser("~"), ".carbonblack", "credentials.%s" % product_name),
+            os.path.join(".", ".carbonblack", "credentials.%s" % product_name),
+        ]
+
         if "credential_file" in kwargs:
-            self.credential_search_path = [kwargs["credential_file"]]
-        else:
-            self.credential_search_path = [
-                os.path.join(os.path.sep, "etc", "carbonblack", "credentials.%s" % product_name),
-                os.path.join(os.path.expanduser("~"), ".carbonblack", "credentials.%s" % product_name),
-                os.path.join(".", ".carbonblack", "credentials.%s" % product_name),
-            ]
+            if isinstance(kwargs["credential_file"], six.string_types):
+                self.credential_search_path = [kwargs["credential_file"]]
+            elif type(kwargs["credential_file"]) is list:
+                self.credential_search_path = kwargs["credential_file"]
 
         self.credentials = RawConfigParser(defaults=default_profile)
         self.credential_files = self.credentials.read(self.credential_search_path)

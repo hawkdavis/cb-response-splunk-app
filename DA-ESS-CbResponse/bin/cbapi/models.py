@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
-from six import python_2_unicode_compatible
+
+from copy import deepcopy
+
+from cbapi.six import python_2_unicode_compatible
 
 import base64
 import os.path
-from six import iteritems, add_metaclass
-from six.moves import range
+from cbapi.six import iteritems, add_metaclass
+from cbapi.six.moves import range
 from .response.utils import convert_from_cb, convert_to_cb
 import yaml
 import json
@@ -223,6 +226,9 @@ class NewBaseModel(object):
         else:
             raise AttributeError("Field {0:s} is immutable".format(attrname))
 
+    def get(self, attrname, default_val=None):
+        return getattr(self, attrname, default_val)
+
     def _set(self, attrname, new_value):
         pass
 
@@ -297,8 +303,8 @@ class NewBaseModel(object):
         except AttributeError:
             return None
 
-        if not field_value:             # NOTE THAT this is assuming no legitimate object has an ID of 0 (zero)
-            return None                 # - passing 0 to .select() for the field_value will return a Query object
+        if field_value is None:
+            return None
 
         return self._cb.select(join_cls, field_value)
 
@@ -354,9 +360,14 @@ class MutableBaseModel(NewBaseModel):
 
     def _update_object(self):
         if self.__class__.primary_key in self._dirty_attributes.keys() or self._model_unique_id is None:
+            new_object_info = deepcopy(self._info)
+            try:
+                del(new_object_info[self.__class__.primary_key])
+            except Exception:
+                pass
             log.debug("Creating a new {0:s} object".format(self.__class__.__name__))
-            ret = self._cb.api_json_request(self.__class__._new_object_http_method, self.__class__.urlobject,
-                                            data=self._info)
+            ret = self._cb.api_json_request(self.__class__._new_object_http_method, self.urlobject,
+                                            data=new_object_info)
         else:
             log.debug("Updating {0:s} with unique ID {1:s}".format(self.__class__.__name__, str(self._model_unique_id)))
             ret = self._cb.api_json_request(self.__class__._change_object_http_method,
