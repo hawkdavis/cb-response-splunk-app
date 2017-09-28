@@ -67,7 +67,7 @@
       <table>
         <title>CommandLine by Process</title>
         <search>
-          <query>`cb` computer_name=$hostname$ type="ingress.event.procstart" | stats values(command_line) by process_path</query>
+          <query>`cb` computer_name=$hostname$ type="ingress.event.procstart" | stats values(command_line) by process</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
         </search>
@@ -101,7 +101,7 @@
       <table>
         <title>Critical Process Check</title>
         <search>
-          <query>`cb` computer_name=$hostname$ type="ingress.event.procstart" process_path="*\\powershell.exe" OR process_path="*\\msbuild.exe" OR process_path="*\\psexec.exe" OR process_path="*\\at.exe" OR process_path="*\\schtasks.exe" OR process_path="*\\net.exe" OR process_path="*\\vssadmin.exe" OR process_path="*\\utilman.exe" OR process_path="*\\wmic.exe" OR process_path="*\\mshta.exe" OR process_path="*\\wscript.exe" OR process_path="*\\cscript.exe" OR process_path="*\\cmd.exe" OR process_path="*\\whoami.exe" OR process_path="*\\mmc.exe" OR process_path="*\\systeminfo.exe" OR process_path="*\\csvde.exe" OR process_path="*\\certutil.exe" | stats count by process_path</query>
+          <query>`cb` computer_name=$hostname$ type="ingress.event.procstart" process="powershell.exe" OR process="msbuild.exe" OR process="psexec.exe" OR process="at.exe" OR process="schtasks.exe" OR process="net.exe" OR process="vssadmin.exe" OR process="utilman.exe" OR process="wmic.exe" OR process="mshta.exe" OR process="wscript.exe" OR process="cscript.exe" OR process="cmd.exe" OR process="whoami.exe" OR process="mmc.exe" OR process="systeminfo.exe" OR process="csvde.exe" OR process="certutil.exe" | stats count by process</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
         </search>
