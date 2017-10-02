@@ -659,9 +659,10 @@ define(
             redirect_to_splunk_app_homepage: function redirect_to_splunk_app_homepage(
                 app_name,
             ) {
-                var redirect_url = "/app/" + app_name;
+                var redirect_url = "/app/" + app_name + "/overview";
 
                 window.location.href = redirect_url;
+
                 console.log("trying to redirect to  " + redirect_url);
             },
 
@@ -751,8 +752,8 @@ define(
                     "    <div class='right'>" +
                     "        <h2>Parners Overview</h2>" +
                     "        <div class='description'>" +
-                    "            <h3>Overview</h3>"  +
                     "            <table id='connectorstable'><table>" +
+                    "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target="_blank">developer.carbonblack.com for an overview of our connectors and integrations</a></h3> " +
                     "        </div>" +
                     "    </div>" +
                     "</div>";
