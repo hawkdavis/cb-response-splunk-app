@@ -7,6 +7,17 @@ import json
 import time
 import logging
 import traceback
+import os
+
+import logging
+logger = logging.getLogger('cbhelpers.py')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler(os.environ['SPLUNK_HOME']+'/var/log/splunk/cbhelpers.log')
+fh.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s | src="%(name)s" | lvl="%(levelname)s" | msg="%(message)s"')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+logger.info("CBHELPERS LOG!")
 
 
 class CredentialMissingError(Exception):
@@ -20,28 +31,34 @@ except ImportError:
 
 
 def get_creds(splunk_service):
-    api_credentials = splunk_service.storage_passwords["DA-ESS-CbResponse:apikey"]
-    token = api_credentials.clear_password.split("``splunk_cred_sep``")[1]
 
-    cb_server = splunk_service.confs["DA-ESS-CbResponse_customized"]["cburl"].content['content']
+    api_credentials = splunk_service.storage_passwords["credential:CbResponse_realm:admin:"]
+
+    token = api_credentials.clear_password
+
+    cb_server = splunk_service.confs["CbResponse_Settings"]["api_info"]['api_url']
+
+    ssl_settings = splunk_service.confs['CbResponse_Settings']['api_info']['ssl_verify']
+
+    ssl_verify = False if ssl_settings == '0' else True
+
+    logger.debug("%s %s %s %s" % (api_credentials.clear_password, cb_server, ssl_verify, ssl_settings))
 
     if not cb_server or not token:
-        raise CredentialMissingError("Please visit the Set Up Page for the Cb Response App for Splunk to set the URL and API key for your Cb Response server.")
+        raise CredentialMissingError(
+            "Please visit the Set Up Page for the Cb Response App for Splunk to set the URL and API key for your Cb Response server.")
 
-    return cb_server, token
+    return cb_server, token, ssl_verify
 
 
 def get_legacy_cbapi(splunk_service):
-    cb_server, token = get_creds(splunk_service)
-    return CbApi(cb_server, ssl_verify=False, token=token)
+    cb_server, token , ssl_verify= get_creds(splunk_service)
+    return CbApi(cb_server, ssl_verify=ssl_verify, token=token)
 
 
 def get_cbapi(splunk_service):
-    if not splunk_service:
-        return CbEnterpriseResponseAPI()
-    else:
-        cb_server, token = get_creds(splunk_service)
-        return CbEnterpriseResponseAPI(token=token, url=cb_server, ssl_verify=False)
+    cb_server, token , ssl_verify = get_creds(splunk_service)
+    return CbEnterpriseResponseAPI(token=token, url=cb_server, ssl_verify=ssl_verify)
 
 
 class CbSearchCommand2(EventingCommand):

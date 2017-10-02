@@ -63,11 +63,11 @@ class ConnectionError(Exception):
 
 class Connection(object):
     def __init__(self, credentials, integration_name=None, timeout=None, max_retries=None):
-        if not credentials.url or not credentials.url.startswith(("https://", "http://")):
-            raise ConnectionError("Server URL must be a URL: eg. https://localhost")
+        if not credentials.url or not credentials.url.startswith(("https://")):
+            raise ConnectionError("Server URL must be a HTTPS:// URL: eg. https://localhost")
 
         if credentials.url.startswith("http://"):
-            log.warning("Connecting to Cb server on unencrypted HTTP")
+            raise ConnectionError("Server URL must be a HTTPS:// URL: eg. https://localhost")
 
         if not credentials.token:
             raise ConnectionError("No API token provided")

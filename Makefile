@@ -1,4 +1,4 @@
-APPNAME=DA-ESS-CbResponse
+APPNAME=CbResponse
 VERSION=1.0.0
 BUNDLE=$(APPNAME)-$(VERSION)
 all: $(APPNAME).spl
@@ -25,4 +25,4 @@ $(APPNAME).spl: clean
 	find build/$(APPNAME) -name ".*" -delete
 	find build/$(APPNAME) -name "*.pyc" -delete
 
-	(cd build && gtar -cvzf $(APPNAME).spl $(APPNAME))
+	(cd build && tar -cvzf $(APPNAME).spl $(APPNAME))
