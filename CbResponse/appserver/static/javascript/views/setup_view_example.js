@@ -350,7 +350,7 @@ define(
 
                 // We don't care if the stanza property does or doesn't exist
                 // This is because we can use the
-                // configurationStanza.update() function to create and
+                // configurationStanza.update() function to create anda
                 // change the information of a property
                 await this.update_stanza_properties(
                     configuration_stanza_accessor,
@@ -659,10 +659,10 @@ define(
             redirect_to_splunk_app_homepage: function redirect_to_splunk_app_homepage(
                 app_name,
             ) {
-                var redirect_url = "/app/" + app_name + "/overview";
+                var redirect_url = "/app/" + app_name + "/overview?form.timeframe.earliest=-24h%40h&form.timeframe.latest=now";
 
                 window.location.href = redirect_url;
-
+                //window.location.reload(false);
                 console.log("trying to redirect to  " + redirect_url);
             },
 
@@ -750,10 +750,12 @@ define(
                     "        </div>" +
                     "    </div>" +
                     "    <div class='right'>" +
-                    "        <h2>Parners Overview</h2>" +
+                    "        <h2>Carbonblack Technical Alliance</h2>" +
+                    "        <h3> Cb Developer Network maintains a number of integrations and connectors <br> with other security products & vendors</h3>   "    +
                     "        <div class='description'>" +
-                    "            <table id='connectorstable'><table>" +
-                    "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target="_blank">developer.carbonblack.com for an overview of our connectors and integrations</a></h3> " +
+                    "            <table id='connectorstable' class='w3-table w3-stried w3-border'><table>" +
+                    "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> <br> for an overview of our connectors and integrations</h3> " +
+                    "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +
                     "    </div>" +
                     "</div>";
