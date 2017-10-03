@@ -1,0 +1,17 @@
+process
+autoit.exe
+powershell.exe
+psexec*.exe
+psexesvc.exe
+cmd.exe
+wscript.exe
+cscript.exe
+python*.exe
+python*
+perl*.exe
+perl*
+sh.exe
+bash.exe
+zsh.exe
+sh
+bash
