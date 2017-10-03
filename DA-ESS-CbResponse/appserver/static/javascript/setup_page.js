@@ -1,6 +1,6 @@
 "use strict";
 
-var app_name = "CbResponse";
+var app_name = "DA-ESS-CbResponse";
 
 // This is an undocumented Splunk solution for how to include javascript logic
 // from other files.

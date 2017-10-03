@@ -1,4 +1,4 @@
-APPNAME=CbResponse
+APPNAME=DA-ESS-CbResponse
 VERSION=1.0.0
 BUNDLE=$(APPNAME)-$(VERSION)
 all: $(APPNAME).spl

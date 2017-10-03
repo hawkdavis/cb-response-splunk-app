@@ -67,7 +67,7 @@ define(
 
             render: function() {
                 this.el.innerHTML = this.get_template();
-                var app_name =  "CbResponse";
+                var app_name =  "DA-ESS-CbResponse";
 
                 var application_name_space = {
                     owner: "nobody",
@@ -127,7 +127,7 @@ define(
 
             // This is where the main setup process occurs
             perform_setup: async function perform_setup(splunk_js_sdk, api_url, api_key) {
-                var app_name =  "CbResponse";
+                var app_name =  "DA-ESS-CbResponse"
 
                 var application_name_space = {
                     owner: "nobody",
@@ -194,7 +194,7 @@ define(
                 splunk_js_sdk_service,
                 api_url,
             ) {
-                var custom_configuration_file_name = "CbResponse_Settings";
+                var custom_configuration_file_name = "DA-ESS-CbResponse_Settings";
                 var stanza_name = "api_info";
                 var properties_to_update = {
                     api_url: api_url,
@@ -225,9 +225,9 @@ define(
                 api_key,
             ) {
                 // /servicesNS/<NAMESPACE_USERNAME>/<SPLUNK_APP_NAME>/storage/passwords/<REALM>%3A<USERNAME>%3A
-                var realm = "CbResponse_realm";
+                var realm = "DA-ESS-CbResponse_realm";
                 var username = "admin";
-                var storage_passwords_namespace = { "app":"CbResponse", "owner":"admin" , "sharing":"app"};
+                var storage_passwords_namespace = { "app":"DA-ESS-CbResponse", "owner":"admin" , "sharing":"app"};
                 var storage_passwords_accessor = splunk_js_sdk_service.storagePasswords( storage_passwords_namespace );
 
                 await storage_passwords_accessor.fetch();
@@ -257,7 +257,7 @@ define(
             },
 
             complete_setup: async function complete_setup(splunk_js_sdk_service) {
-                var app_name = "CbResponse";
+                var app_name = "DA-ESS-CbResponse";
                 var configuration_file_name = "app";
                 var stanza_name = "install";
                 var properties_to_update = {
@@ -298,7 +298,7 @@ define(
                 // Retrieve the accessor used to get a configuration file
                 var splunk_js_sdk_service_configurations = splunk_js_sdk_service.configurations(
                     {
-                        "owner":"nobody","app":"CbResponse","sharing":"app"
+                        "owner":"nobody","app":"DA-ESS-CbResponse","sharing":"app"
                     },
                 );
                 await splunk_js_sdk_service_configurations.fetch();
