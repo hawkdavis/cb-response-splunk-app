@@ -1,7 +1,4 @@
-/* -------------------------------------------------------------------------- */
-/* General Styling                                                            */
-/* -------------------------------------------------------------------------- */
-
+@import "w3.css" w3-table-all;
 .setup.container {
     display: flex;
     flex-direction: row;
@@ -69,9 +66,9 @@
     color: rgba(255, 0, 0, 1);
 }
 
+/*
 table {
   table-layout: fixed;
-  width: 75%;
   border-collapse: collapse;
   border: 3px solid black;
 }
@@ -94,4 +91,4 @@ thead th:nth-child(4) {
 
 th, td {
   padding: 10px;
-}
+}*/

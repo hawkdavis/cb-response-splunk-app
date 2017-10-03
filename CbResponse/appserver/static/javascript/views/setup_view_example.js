@@ -227,11 +227,8 @@ define(
                 // /servicesNS/<NAMESPACE_USERNAME>/<SPLUNK_APP_NAME>/storage/passwords/<REALM>%3A<USERNAME>%3A
                 var realm = "CbResponse_realm";
                 var username = "admin";
-
-                var storage_passwords_accessor = splunk_js_sdk_service.storagePasswords(
-                    { "owner" : username , "app" : "CbResponse" , "sharing" : "global"
-                    },
-                );
+                var storage_passwords_namespace = { "app":"CbResponse", "owner":"admin" , "sharing":"app"};
+                var storage_passwords_accessor = splunk_js_sdk_service.storagePasswords( storage_passwords_namespace );
 
                 await storage_passwords_accessor.fetch();
 
@@ -301,7 +298,7 @@ define(
                 // Retrieve the accessor used to get a configuration file
                 var splunk_js_sdk_service_configurations = splunk_js_sdk_service.configurations(
                     {
-                        // Name space information not provided
+                        "owner":"nobody","app":"CbResponse","sharing":"app"
                     },
                 );
                 await splunk_js_sdk_service_configurations.fetch();
@@ -425,6 +422,8 @@ define(
                 for (var index = 0; index < storage_passwords.length; index++) {
                     storage_password = storage_passwords[index];
                     storage_password_stanza_name = storage_password.name;
+                    console.log("storage_password" + storage_password)
+                    console.log("stoarage_password name = " + storage_password_stanza_name);
                     storage_passwords_found.push(storage_password);
                     console.log(storage_password);
                 }
@@ -753,7 +752,7 @@ define(
                     "        <h2>Carbonblack Technical Alliance</h2>" +
                     "        <h3> Cb Developer Network maintains a number of integrations and connectors <br> with other security products & vendors</h3>   "    +
                     "        <div class='description'>" +
-                    "            <table id='connectorstable' class='w3-table w3-stried w3-border'><table>" +
+                    "            <table id='connectorstable' class='w3-table-all'><table>" +
                     "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> <br> for an overview of our connectors and integrations</h3> " +
                     "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +
