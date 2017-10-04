@@ -50,7 +50,7 @@ define(
                     var tablehtml = connectorstable.html();
                     if (found_partners.length >= 1 ){
 
-                        tablehtml +=  "<thead><tr><th>Connector</th><th>Link</th></tr></thead>";
+                        tablehtml +=  "<thead><th>Connector</th><th>Link</th></tr></thead>";
                         for (var i = 0 ; i < found_partners.length ; i++)
                         {
                             var partner = found_partners[i];
@@ -58,10 +58,12 @@ define(
                             var linkhtml = '<a href="'+link+' "target="_blank">'+link+'</a>';
                             tablehtml += '<tr><td>'+partner+'</td><td>' + linkhtml + '</td></tr>';
                         }
-                        tablehtml += "<tfoot><tr>The above partners were detected in your splunk instance.</tr></tfoot>"
+                        tablehtml += "<tfoot><tr><td colspan='2'>The above partners were detected in your splunk instance.</td></tr></tfoot>";
+                        console.log("found partners");
                     }
                     else {
-                        tablehtml += "<tfoot><tr>Did not detect any Technical Alliance Partners on your splunk instance</tr></tfoot>"
+                        tablehtml += "<tfoot><tr><td colspan='2'>Did not detect any Technical Alliance Partners on your splunk instance</td></tr></tfoot>";
+                        console.log("Didn't find partners");
                     }
                     connectorstable.html(tablehtml);
                     connectorstable.prop("style","visibility:visible");
