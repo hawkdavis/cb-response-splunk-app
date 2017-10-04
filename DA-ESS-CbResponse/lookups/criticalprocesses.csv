@@ -1,0 +1,17 @@
+process
+powershell.exe
+cmd.exe
+net.exe
+psexec.exe
+at.exe
+schtasks.exe
+klist.exe
+msbuild.exe
+vssadmin.exe
+systeminfo.exe
+whoami.exe
+mshta.exe
+wscript.exe
+cscript.exe
+certutil.exe
+wmic.exe
