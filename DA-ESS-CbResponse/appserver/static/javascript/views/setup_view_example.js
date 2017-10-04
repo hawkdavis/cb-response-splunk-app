@@ -44,7 +44,6 @@ define(
                             found_partners.push(result);
                         }
                     }
-                    console.log(found_partners);
                     var connectorstable = jquery("#connectorstable");
                     var tablehtml = connectorstable.html();
                     if (found_partners.length >= 1 ){
@@ -58,11 +57,9 @@ define(
                             tablehtml += '<tr><td>'+partner+'</td><td>' + linkhtml + '</td></tr>';
                         }
                         tablehtml += "<tfoot><tr><td colspan='2'>The partners listed were detected in your splunk instance.</td></tr></tfoot>";
-                        console.log("found partners");
                     }
                     else {
                         tablehtml += "<tfoot><tr><td colspan='2'>Did not detect any Technical Alliance Partners in your splunk instance</td></tr></tfoot>";
-                        console.log("Didn't find partners");
                     }
                     connectorstable.html(tablehtml);
                     connectorstable.prop("style","visibility:visible");
@@ -419,7 +416,6 @@ define(
                 }
                 var does_storage_password_exist = storage_passwords_found.length > 0;
 
-                console.log(does_storage_password_exist);
 
                 return does_storage_password_exist;
             },
@@ -652,7 +648,6 @@ define(
 
                 window.location.href = redirect_url;
                 //window.location.reload(false);
-                console.log("trying to redirect to  " + redirect_url);
             },
 
             // ----------------------------------

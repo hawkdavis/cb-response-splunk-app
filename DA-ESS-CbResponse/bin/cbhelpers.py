@@ -10,6 +10,8 @@ import traceback
 import os
 
 import logging
+
+'''
 logger = logging.getLogger('cbhelpers.py')
 logger.setLevel(logging.DEBUG)
 fh = logging.FileHandler(os.environ['SPLUNK_HOME']+'/var/log/splunk/cbhelpers.log')
@@ -18,7 +20,7 @@ formatter = logging.Formatter('%(asctime)s | src="%(name)s" | lvl="%(levelname)s
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 logger.info("CBHELPERS LOG!")
-
+'''
 
 class CredentialMissingError(Exception):
     pass
@@ -42,7 +44,7 @@ def get_creds(splunk_service):
 
     ssl_verify = False if ssl_settings == '0' or ssl_settings == 'false' else True
 
-    logger.debug("%s %s %s %s" % (api_credentials.clear_password, cb_server, ssl_verify, ssl_settings))
+    #logger.debug("%s %s %s %s" % (api_credentials.clear_password, cb_server, ssl_verify, ssl_settings))
 
     if not cb_server or not token:
         raise CredentialMissingError(
