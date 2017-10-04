@@ -1,0 +1,18 @@
+process
+csvde.exe
+dsadd.exe
+dsget.exe
+dsmod.exe
+dsquery.exe
+ ldifde.exe
+ ntdsutil.exe
+dcdiag.exe
+dcpromo.exe
+adprep.exe
+dsacl.exe
+ntdsutil.exe
+dsmove.exe
+ldp.exe
+netdom.exe
+dsrm.exe
+adinfo.exe
