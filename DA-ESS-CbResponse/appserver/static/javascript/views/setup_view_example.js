@@ -745,7 +745,6 @@ define(
                     "    </div>" +
                     "    <div class='right'>" +
                     "        <div class='description'>" +
-                    "            <h2> CarbonBlack Developer Network</h2> " +
                     "            <table id='connectorstable' style='visibility:visible'><caption>CarbonBlack Technical Alliance</caption></table> " +
                     "            <h3> The CarbonBlack Developer Network maintains a number of connectors and integrations with other security products </h3> " +
                     "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> <br> for an overview of our connectors and integrations</h3> " +
