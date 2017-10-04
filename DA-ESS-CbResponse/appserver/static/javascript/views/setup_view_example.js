@@ -46,10 +46,11 @@ define(
                         }
                     }
                     console.log(found_partners);
+                    var connectorstable = jquery("#connectorstable");
+                    var tablehtml = connectorstable.html();
                     if (found_partners.length >= 1 ){
 
-                        var tablehtml =  "<tr><th>Connector</th><th>Link</th></tr>";
-
+                        tablehtml +=  "<thead><tr><th>Connector</th><th>Link</th></tr></thead>";
                         for (var i = 0 ; i < found_partners.length ; i++)
                         {
                             var partner = found_partners[i];
@@ -57,11 +58,13 @@ define(
                             var linkhtml = '<a href="'+link+' "target="_blank">'+link+'</a>';
                             tablehtml += '<tr><td>'+partner+'</td><td>' + linkhtml + '</td></tr>';
                         }
-
-                        var connectorstable = jquery("#connectorstable");
-                        connectorstable.html(tablehtml);
-                        connectorstable.prop("style","visibility:visible");
+                        tablehtml += "<tfoot><tr>The above partners were detected in your splunk instance.</tr></tfoot>"
                     }
+                    else {
+                        tablehtml += "<tfoot><tr>Did not detect any Technical Alliance Partners on your splunk instance</tr></tfoot>"
+                    }
+                    connectorstable.html(tablehtml);
+                    connectorstable.prop("style","visibility:visible");
                 });
             },
 
@@ -200,21 +203,11 @@ define(
                     api_url: api_url,
                 };
 
-                var ssl_properties_to_update = {
-                    "ssl_verify": false,
-                };
-
                 await this.update_configuration_file(
                     splunk_js_sdk_service,
                     custom_configuration_file_name,
                     stanza_name,
                     properties_to_update,
-                );
-                await this.update_configuration_file(
-                    splunk_js_sdk_service,
-                    custom_configuration_file_name,
-                    stanza_name,
-                    ssl_properties_to_update,
                 );
 
             },
@@ -699,7 +692,7 @@ define(
             get_template: function get_template() {
                 template_string =
                     "<div class='title'>" +
-                    "    <h1>Welcome to Your Setup Page!</h1>" +
+                    "    <h1>Welcome to the CarbonBlack Response App for Splunk!</h1>" +
                     "</div>" +
                     "<div class='setup container'>" +
                     "    <div class='left'>" +
@@ -749,10 +742,10 @@ define(
                     "        </div>" +
                     "    </div>" +
                     "    <div class='right'>" +
-                    "        <h2>Carbonblack Technical Alliance</h2>" +
-                    "        <h3> Cb Developer Network maintains a number of integrations and connectors <br> with other security products & vendors</h3>   "    +
                     "        <div class='description'>" +
-                    "            <table id='connectorstable' class='w3-table-all'><table>" +
+                    "            <h2> CarbonBlack Developer Network</h2> " +
+                    "            <table id='connectorstable' style='visibility:visible'><caption>CarbonBlack Technical Alliance</caption></table> " +
+                    "            <h3> The CarbonBlack Developer Network maintains a number of connectors and integrations with other security products </h3> " +
                     "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> <br> for an overview of our connectors and integrations</h3> " +
                     "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +

@@ -38,9 +38,9 @@ def get_creds(splunk_service):
 
     cb_server = splunk_service.confs["DA-ESS-CbResponse_Settings"]["api_info"]['api_url']
 
-    ssl_settings = splunk_service.confs['DA-ESS-CbResponse_Settings']['api_info']['ssl_verify']
+    ssl_settings = splunk_service.confs['DA-ESS-CbResponse_Settings']['ssl_info']['ssl_verify']
 
-    ssl_verify = False if ssl_settings == '0' else True
+    ssl_verify = False if ssl_settings == '0' or ssl_settings == 'false' else True
 
     logger.debug("%s %s %s %s" % (api_credentials.clear_password, cb_server, ssl_verify, ssl_settings))
 
