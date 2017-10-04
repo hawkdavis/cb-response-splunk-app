@@ -19,7 +19,7 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = {Cyphort:"cyphort",FireEye:"fireeye",ThreatConnect:"threatconnect",iSight:"isight",InfoBlox:"infloblox",BlueCoat:"bluecoat",VMRay:"vmray",Lastline:"lastline",ThreatExchange:"threatexchange",PaloAlto:"wildfire",Juniper:"juniper",Fidelis:"fildelis"};
+                var partners = {Cyphort:"cyphort",FireEye:"fireeye",ThreatConnect:"threatconnect",iSight:"isight",InfoBlox:"infloblox",BlueCoat:"bluecoat",VMRay:"vmray",Lastline:"lastline",ThreatExchange:"threatexchange",PaloAlto:"wildfire",Juniper:"skyatp",Fidelis:"fildelis"};
                 var found_partners = [];
                 var apps = splunk_js_sdk_service.apps();
 
@@ -28,8 +28,7 @@ define(
                     for (var key in partners) {
                         found = appname.includes(key) || appname.toLowerCase().includes(key.toLowerCase());
                         if (found) {
-                            console.log(key);
-                            return key;
+                            return { "partner": key , "connector": partners[key]}
                         }
                     }
                     return false;
@@ -50,19 +49,19 @@ define(
                     var tablehtml = connectorstable.html();
                     if (found_partners.length >= 1 ){
 
-                        tablehtml +=  "<thead><th>Connector</th><th>Link</th></tr></thead>";
+                        tablehtml +=  "<thead><th>Partner</th><th>Link To Connector</th></tr></thead>";
                         for (var i = 0 ; i < found_partners.length ; i++)
                         {
-                            var partner = found_partners[i];
-                            var link = "https://www.github.com/carbonblack/cb-"+partner+"-connector";
+                            var partner = found_partners[i]['partner'];
+                            var link = "https://www.github.com/carbonblack/cb-"+found_partners[i]['connector']+"-connector";
                             var linkhtml = '<a href="'+link+' "target="_blank">'+link+'</a>';
                             tablehtml += '<tr><td>'+partner+'</td><td>' + linkhtml + '</td></tr>';
                         }
-                        tablehtml += "<tfoot><tr><td colspan='2'>The above partners were detected in your splunk instance.</td></tr></tfoot>";
+                        tablehtml += "<tfoot><tr><td colspan='2'>The partners listed were detected in your splunk instance.</td></tr></tfoot>";
                         console.log("found partners");
                     }
                     else {
-                        tablehtml += "<tfoot><tr><td colspan='2'>Did not detect any Technical Alliance Partners on your splunk instance</td></tr></tfoot>";
+                        tablehtml += "<tfoot><tr><td colspan='2'>Did not detect any Technical Alliance Partners in your splunk instance</td></tr></tfoot>";
                         console.log("Didn't find partners");
                     }
                     connectorstable.html(tablehtml);
@@ -410,17 +409,13 @@ define(
                 realm_name,
                 username,
             ) {
-                console.log("In does_storage_password_exist");
                 storage_passwords = storage_passwords_accessor.list();
                 storage_passwords_found = [];
 
                 for (var index = 0; index < storage_passwords.length; index++) {
                     storage_password = storage_passwords[index];
                     storage_password_stanza_name = storage_password.name;
-                    console.log("storage_password" + storage_password)
-                    console.log("stoarage_password name = " + storage_password_stanza_name);
                     storage_passwords_found.push(storage_password);
-                    console.log(storage_password);
                 }
                 var does_storage_password_exist = storage_passwords_found.length > 0;
 
@@ -747,7 +742,7 @@ define(
                     "        <div class='description'>" +
                     "            <table id='connectorstable' style='visibility:visible'><caption>CarbonBlack Technical Alliance</caption></table> " +
                     "            <h3> The CarbonBlack Developer Network maintains a number of connectors and integrations with other security products </h3> " +
-                    "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> <br> for an overview of our connectors and integrations</h3> " +
+                    "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> for an overview of our connectors and integrations</h3> " +
                     "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +
                     "    </div>" +
