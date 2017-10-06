@@ -19,7 +19,7 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = {Cyphort:"cyphort",FireEye:"fireeye",ThreatConnect:"threatconnect",iSight:"isight",InfoBlox:"infloblox",BlueCoat:"bluecoat",VMRay:"vmray",Lastline:"lastline",ThreatExchange:"threatexchange",PaloAlto:"wildfire",Juniper:"skyatp",Fidelis:"fildelis"};
+                var partners = {Cyphort:"cyphort",FireEye:"fireeye",ThreatConnect:"threatconnect",iSight:"isight",InfoBlox:"infloblox",VMRay:"vmray",Lastline:"lastline",ThreatExchange:"threatexchange",PaloAlto:"wildfire",Juniper:"skyatp",Fidelis:"fildelis"};
                 var found_partners = [];
                 var apps = splunk_js_sdk_service.apps();
 
@@ -642,10 +642,8 @@ define(
             redirect_to_splunk_app_homepage: function redirect_to_splunk_app_homepage(
                 app_name,
             ) {
-                var redirect_url = "/app/" + app_name + "/overview?form.timeframe.earliest=-24h%40h&form.timeframe.latest=now";
-
+                var redirect_url = "/app/" + app_name + "/overview";
                 window.location.href = redirect_url;
-                //window.location.reload(false);
             },
 
             // ----------------------------------
