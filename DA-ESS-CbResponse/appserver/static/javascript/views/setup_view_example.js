@@ -162,10 +162,6 @@ define(
                     // updates made to the file system
                     await this.reload_splunk_app(splunk_js_sdk_service, app_name);
 
-                    //detect partners
-                    //await this.detect_partners(splunk_js_sdk_service);
-
-                    // Redirect to the Splunk App's home page
                     this.redirect_to_splunk_app_homepage(app_name);
                 } catch (error) {
                     // This could be better error catching.
@@ -412,7 +408,9 @@ define(
                 for (var index = 0; index < storage_passwords.length; index++) {
                     storage_password = storage_passwords[index];
                     storage_password_stanza_name = storage_password.name;
-                    storage_passwords_found.push(storage_password);
+                    if  (storage_password_stanza_name.includes(realm_name)) {
+                        storage_passwords_found.push(storage_password);
+                    }
                 }
                 var does_storage_password_exist = storage_passwords_found.length > 0;
 
@@ -688,13 +686,12 @@ define(
                     "</div>" +
                     "<div class='setup container'>" +
                     "    <div class='left'>" +
-                    "        <h2>Overview</h2>" +
                     "        <h2>Setup Properties</h2>" +
                     "        <div class='field api_url'>" +
                     "            <div class='title'>" +
                     "                <div>" +
                     "                    <h3>API URL:</h3>" +
-                    "                    Please specify the url that will be used for API requests." +
+                    "                    Please specify the url that will be used for CbR API requests." +
                     "                </div>" +
                     "            </div>" +
                     "            </br>" +
@@ -710,7 +707,7 @@ define(
                     "        <div class='field api_key'>" +
                     "            <div class='title'>" +
                     "                <h3>API Key:</h3>" +
-                    "                Please specify the API Key that will be used to authenticate to the API." +
+                    "                Please specify the API Key that will be used to authenticate to the CbR API." +
                     "            </div>" +
                     "            </br>" +
                     "            <div class='user_input'>" +
@@ -721,7 +718,7 @@ define(
                     "        </div>" +
                     "        <h2>Complete the Setup</h2>" +
                     "        <div>" +
-                    "            Please press the 'Perform Setup` button below to complete the Splunk App setup." +
+                    "            Please press the 'Perform Setup` button below to complete the Cbr Splunk App setup." +
                     "        </div>" +
                     "        <br/>" +
                     "        <div>" +
