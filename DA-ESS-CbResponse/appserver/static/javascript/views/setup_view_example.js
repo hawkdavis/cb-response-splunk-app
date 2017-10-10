@@ -19,16 +19,19 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = {Cyphort:"cyphort",FireEye:"fireeye",ThreatConnect:"threatconnect",iSight:"isight",InfoBlox:"infloblox",VMRay:"vmray",Lastline:"lastline",ThreatExchange:"threatexchange",PaloAlto:"wildfire",Juniper:"skyatp",Fidelis:"fildelis"};
+                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIPS"]},{name:"FireEye" ,connector:"fireeye", cat :["FireWall","TIPS","Detonation"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIPS"]},{name:"iSight",connector:"isight",cat:["Analytics"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["Analytics"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation","Firewall"]},{name:"Juniper",connector:"skyatp",cat:["Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall"]}];
+                var categories = ["Endpoint","Firewall","NAC","Patch Managment","TIPS","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
+
                 var found_partners = [];
                 var apps = splunk_js_sdk_service.apps();
 
                 function appInPartners(appname,partners) {
                     var found = false;
-                    for (var key in partners) {
-                        found = appname.includes(key) || appname.toLowerCase().includes(key.toLowerCase());
+                    for (var i = 0 ; i < partners.length ; i++) {
+                        var name = partners[i]['name'];
+                        found = appname.includes(name) || appname.toLowerCase().includes(name.toLowerCase());
                         if (found) {
-                            return { "partner": key , "connector": partners[key]}
+                            return { "partner": name ,"connector": partners[i]['connector'], "cat": partners[i]['cat']};
                         }
                     }
                     return false;
@@ -37,31 +40,43 @@ define(
                 apps.fetch(function (err) {
 
                     var app_list = apps.list();
-
                     for (var i = 0 ; i < app_list.length ; i++) {
                         var result = appInPartners(app_list[i].name, partners);
                         if (result !== false){
                             found_partners.push(result);
                         }
                     }
+
                     var connectorstable = jquery("#connectorstable");
                     var tablehtml = connectorstable.html();
-                    if (found_partners.length >= 1 ){
-
-                        tablehtml +=  "<thead><th>Partner</th><th>Link To Connector</th></tr></thead>";
-                        for (var i = 0 ; i < found_partners.length ; i++)
-                        {
-                            var partner = found_partners[i]['partner'];
-                            var link = "https://www.github.com/carbonblack/cb-"+found_partners[i]['connector']+"-connector";
-                            var linkhtml = '<a href="'+link+' "target="_blank">'+link+'</a>';
-                            tablehtml += '<tr><td>'+partner+'</td><td>' + linkhtml + '</td></tr>';
-                        }
-                        tablehtml += "<tfoot><tr><td colspan='2'>The partners listed were detected in your splunk instance.</td></tr></tfoot>";
-                    }
-                    else {
-                        tablehtml += "<tfoot><tr><td colspan='2'>Did not detect any Technical Alliance Partners in your splunk instance</td></tr></tfoot>";
+                    tablehtml +=  "<thead><th>Category</th><th>Connectors</th></tr></thead>";
+                    for (var i = 0 ; i < categories.length; i++){
+                        var cat = categories[i];
+                        tablehtml +=  '<tr id="'+cat+'"><td>'+cat+'</td><td id="'+cat+'data"></td></tr>';
                     }
                     connectorstable.html(tablehtml);
+
+                    if (found_partners.length >= 1 ){
+                        for (var i = 0 ; i < found_partners.length ; i++)
+                        {
+                            var fp = found_partners[i];
+                            var partner = fp['partner'];
+                            var cats = fp['cat'];
+                            var connector = fp['connector'];
+                            var link = "https://www.github.com/carbonblack/cb-"+connector+"-connector";
+                            var linkhtml = '<a href="'+link+' "target="_blank">'+partner+'</a>';
+                            console.log("cats = " + cats);
+                            console.log("partner = " + partner);
+                            for (var j = 0 ; j < cats.length ; j++) {
+                                var cell = jquery("#"+cats[j]+"data");
+                                if (cell) {
+                                    cell.html(linkhtml);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                    }
                     connectorstable.prop("style","visibility:visible");
                 });
             },
