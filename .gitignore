@@ -113,4 +113,4 @@ fabric.properties
 # Credentials
 creds.make
 
-.DS_STORE
+.DS_Store
