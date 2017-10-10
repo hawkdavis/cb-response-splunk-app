@@ -19,8 +19,8 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIPS"]},{name:"FireEye" ,connector:"fireeye", cat :["FireWall","TIPS","Detonation"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIPS"]},{name:"iSight",connector:"isight",cat:["Analytics"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["Analytics"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation","Firewall"]},{name:"Juniper",connector:"skyatp",cat:["Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall"]}];
-                var categories = ["Endpoint","Firewall","NAC","Patch Managment","TIPS","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
+                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIPS"]},{name:"FireEye" ,connector:"fireeye", cat :["FireWall","TIPS","Detonation", "Orchestration"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIPS"]},{name:"iSight",connector:"isight",cat:["Analytics"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS","Orchestration"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["Analytics"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation","Firewall"]},{name:"Juniper",connector:"skyatp",cat:["Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall","Orchestration"]}];
+                var categories = ["Orchrestration","Endpoint","Firewall","NAC","Patch Managment","TIPS","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
 
                 var found_partners = [];
                 var apps = splunk_js_sdk_service.apps();
@@ -65,8 +65,7 @@ define(
                             var connector = fp['connector'];
                             var link = "https://www.github.com/carbonblack/cb-"+connector+"-connector";
                             var linkhtml = '<a href="'+link+' "target="_blank">'+partner+'</a>';
-                            console.log("cats = " + cats);
-                            console.log("partner = " + partner);
+
                             for (var j = 0 ; j < cats.length ; j++) {
                                 var cell = jquery("#"+cats[j]+"data");
                                 if (cell) {
