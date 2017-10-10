@@ -19,10 +19,9 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIPS"]},{name:"FireEye" ,connector:"fireeye", cat :["FireWall","TIPS","Detonation", "Orchestration"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIPS"]},{name:"iSight",connector:"isight",cat:["Analytics"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS","Orchestration"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["Analytics"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation","Firewall"]},{name:"Juniper",connector:"skyatp",cat:["Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall","Orchestration"]}];
-                var categories = ["Orchrestration","Endpoint","Firewall","NAC","Patch Managment","TIPS","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
-
-                var found_partners = [];
+                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIP"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIP"]},{name:"iSight",connector:"isight",cat:["TIP"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS","Orchestration"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["TIP"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation"]},{name:"Juniper",connector:"skyatp",cat:["Orchestration","Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall","Orchestration"]}];
+                var categories = ["Orchrestration","STIX/TAXII","Firewall","NAC","Patch Managment","TIP","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
+                var found_partners = [{name: "STIX/TAXII", connector:"taxii" , "cat":["TIP"]}];
                 var apps = splunk_js_sdk_service.apps();
 
                 function appInPartners(appname,partners) {
