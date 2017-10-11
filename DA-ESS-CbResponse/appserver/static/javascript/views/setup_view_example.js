@@ -276,11 +276,23 @@ define(
                 splunk_js_sdk_service,
                 app_name,
             ) {
+                function reloaded(app) {
+                        return new Promise(function(resolve, reject) {
+                            app.reload(function (err,entity) {
+                                if (err){
+                                    reject(err);
+                                }
+                                    resolve(reject);
+                            });
+                        });
+                }
+
                 var splunk_js_sdk_apps = splunk_js_sdk_service.apps();
                 await splunk_js_sdk_apps.fetch();
 
                 var current_app = splunk_js_sdk_apps.item(app_name);
-                current_app.reload();
+                await reloaded(current_app);
+
             },
 
             // ----------------------------------
