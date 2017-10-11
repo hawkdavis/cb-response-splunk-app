@@ -1,6 +1,6 @@
 # Cb Response Splunk App
 
-Current Version: 2.0.5
+Current Version: 2.1.0
 
 The Carbon Black App for Splunk allows administrators to leverage the industry's leading EDR solution to see, 
 detect and take action upon endpoint activity from directly within Splunk.
@@ -36,8 +36,16 @@ To configure the Cb Response app for Splunk to connect to your Cb Response serve
 https://developer.carbonblack.com/reference/enterprise-response/authentication/.
 5. Return to the Splunk configuration page and do the following:
     1. Paste the API token into the apikey field.
-    2. Enter the URL for your Cb Response server instance in the cburl field. For example, enter: https://cbserver.mycompany.com
-6.	Click Save to save the new configuration.
+    2. Enter the URL for your Cb Response server instance in the url field. For example, enter: https://cbserver.mycompany.com
+6.	Click Setup to save the new configuration.
+
+*NOTE: SSL VALIDATION IS ENABLED BY DEFAULT 
+    In order to disable SSL Validation, create $SPLUNK_HOME/etc/apps/DA-ESS-CbResponse/local/DA-ESS-CbResponse_Settings.conf 
+with the content:
+```
+[ssl_info]
+ssl_verify=false
+```
 
 The Cb Response app for Splunk uses Splunk’s encrypted credential storage facility to store the API token for your Cb Response server, so the API key is stored securely on the Splunk server.
 
