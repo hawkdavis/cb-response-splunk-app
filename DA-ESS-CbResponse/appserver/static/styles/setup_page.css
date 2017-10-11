@@ -65,6 +65,17 @@
     color: rgba(255, 0, 0, 1);
 }
 
+ul.comma-list {
+  display: flex;
+  list-style: none;
+}
+ul.comma-list li:not(:first-child) {
+  margin-left: 5px;
+}
+ul.comma-list > li:not(:last-child)::after {
+  content: ",";
+}
+
 table {
   border: 1px solid #ccc;
   border-collapse: collapse;

@@ -19,9 +19,9 @@ define(
             detect_partners: function detect_partners(
                 splunk_js_sdk_service,
             ) {
-                var partners = [{name: "Cyphort", connector:"cyphort", "cat":["TIP"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIP"]},{name:"iSight",connector:"isight",cat:["TIP"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS","Orchestration"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["TIP"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation"]},{name:"Juniper",connector:"skyatp",cat:["Orchestration","Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall","Orchestration"]}];
-                var categories = ["Orchrestration","STIX/TAXII","Firewall","NAC","Patch Managment","TIP","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
-                var found_partners = [{name: "STIX/TAXII", connector:"taxii" , "cat":["TIP"]}];
+                var partners = [{name: "Cyphort", connector:"cyphort","cat":["TIP"]},{name:"ThreatConnect",connector:"threatconnect",cat:["TIP"]},{name:"iSight",connector:"isight",cat:["TIP"]},{name:"InfoBlox",connector:"infloblox",cat:["DNS","Orchestration"]},{name:"VMRay",connector:"vmray",cat:["Detonation"]},{name:"Lastline",connector:"lastline","cat":["Detonation"]},{name:"ThreatExchange",connector:"threatexchange",cat:["TIP"]},{name:"PaloAlto",connector:"wildfire",cat:["Detonation"]},{name:"Juniper",connector:"skyatp",display:"Wildfire",cat:["Orchestration","Firewall"]},{name:"Fidelis",connector:"fildelis",cat:["Firewall","Orchestration"]}];
+                var categories = ["Orchrestration","Firewall","NAC","Patch Managment","TIP","Detonation","Vulnerabiltiy Assesment","Analytics","DNS","Email"];
+                var found_partners = [{partner: "STIX/TAXII", connector:"taxii" , cat:["TIP"]}];
                 var apps = splunk_js_sdk_service.apps();
 
                 function appInPartners(appname,partners) {
@@ -30,14 +30,13 @@ define(
                         var name = partners[i]['name'];
                         found = appname.includes(name) || appname.toLowerCase().includes(name.toLowerCase());
                         if (found) {
-                            return { "partner": name ,"connector": partners[i]['connector'], "cat": partners[i]['cat']};
+                            return { partner: name ,connector: partners[i]['connector'], cat: partners[i]['cat']};
                         }
                     }
                     return false;
                 }
 
                 apps.fetch(function (err) {
-
                     var app_list = apps.list();
                     for (var i = 0 ; i < app_list.length ; i++) {
                         var result = appInPartners(app_list[i].name, partners);
@@ -45,30 +44,31 @@ define(
                             found_partners.push(result);
                         }
                     }
-
                     var connectorstable = jquery("#connectorstable");
                     var tablehtml = connectorstable.html();
                     tablehtml +=  "<thead><th>Category</th><th>Connectors</th></tr></thead>";
                     for (var i = 0 ; i < categories.length; i++){
                         var cat = categories[i];
-                        tablehtml +=  '<tr id="'+cat+'"><td>'+cat+'</td><td id="'+cat+'data"></td></tr>';
+                        tablehtml +=  '<tr id="'+cat+'"><td>'+cat+'</td><td><ul class="comma-list" id="'+cat+'data"></ul></td></tr>';
                     }
                     connectorstable.html(tablehtml);
-
                     if (found_partners.length >= 1 ){
                         for (var i = 0 ; i < found_partners.length ; i++)
                         {
                             var fp = found_partners[i];
-                            var partner = fp['partner'];
+                            console.log(fp);
+                            var display = fp['display'];
+                            var partner = (display && display != undefined) ? display : fp['partner'];
                             var cats = fp['cat'];
                             var connector = fp['connector'];
                             var link = "https://www.github.com/carbonblack/cb-"+connector+"-connector";
-                            var linkhtml = '<a href="'+link+' "target="_blank">'+partner+'</a>';
-
+                            var linkhtml = '<li><a href="'+link+' "target="_blank">'+partner+'</a></li>';
                             for (var j = 0 ; j < cats.length ; j++) {
                                 var cell = jquery("#"+cats[j]+"data");
                                 if (cell) {
-                                    cell.html(linkhtml);
+                                    console.log("Trying to update category : #" + cats[j] + "data");
+                                    var linkcopy = linkhtml + cell.html();
+                                    cell.html(linkcopy);
                                 }
                             }
                         }
@@ -655,7 +655,7 @@ define(
             redirect_to_splunk_app_homepage: function redirect_to_splunk_app_homepage(
                 app_name,
             ) {
-                var redirect_url = "/app/" + app_name + "/overview";
+                var redirect_url = "/app/" + app_name + "/overview?setup=1";
                 window.location.href = redirect_url;
             },
 
@@ -693,7 +693,7 @@ define(
             get_template: function get_template() {
                 template_string =
                     "<div class='title'>" +
-                    "    <h1>Welcome to the CarbonBlack Response App for Splunk!</h1>" +
+                    "    <h1>Welcome to the Carbon Black Response App for Splunk!</h1>" +
                     "</div>" +
                     "<div class='setup container'>" +
                     "    <div class='left'>" +
@@ -743,8 +743,8 @@ define(
                     "    </div>" +
                     "    <div class='right'>" +
                     "        <div class='description'>" +
-                    "            <table id='connectorstable' style='visibility:visible'><caption>CarbonBlack Technical Alliance</caption></table> " +
-                    "            <h3> The CarbonBlack Developer Network maintains a number of connectors and integrations with other security products </h3> " +
+                    "            <table id='connectorstable' style='visibility:visible'><caption>Carbon Black Technical Alliance</caption></table> " +
+                    "            <h3> The Carbon Black Developer Network maintains a number of connectors and integrations with other security products </h3> " +
                     "            <h3>Please Visit <a href='https://developer.carbonblack.com/guide/enterprise-response/#connectors' target='_blank'>developer.carbonblack.com </a> for an overview of our connectors and integrations</h3> " +
                     "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +
