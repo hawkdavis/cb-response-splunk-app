@@ -22,6 +22,7 @@ logger.addHandler(fh)
 logger.info("CBHELPERS LOG!")
 '''
 
+
 class CredentialMissingError(Exception):
     pass
 
@@ -33,7 +34,6 @@ except ImportError:
 
 
 def get_creds(splunk_service):
-
     api_credentials = splunk_service.storage_passwords["credential:DA-ESS-CbResponse_realm:admin:"]
 
     token = api_credentials.clear_password
@@ -44,8 +44,6 @@ def get_creds(splunk_service):
 
     ssl_verify = False if ssl_settings == '0' or ssl_settings == 'false' else True
 
-    #logger.debug("%s %s %s %s" % (api_credentials.clear_password, cb_server, ssl_verify, ssl_settings))
-
     if not cb_server or not token:
         raise CredentialMissingError(
             "Please visit the Set Up Page for the Cb Response App for Splunk to set the URL and API key for your Cb Response server.")
@@ -54,12 +52,12 @@ def get_creds(splunk_service):
 
 
 def get_legacy_cbapi(splunk_service):
-    cb_server, token , ssl_verify= get_creds(splunk_service)
+    cb_server, token, ssl_verify = get_creds(splunk_service)
     return CbApi(cb_server, ssl_verify=ssl_verify, token=token)
 
 
 def get_cbapi(splunk_service):
-    cb_server, token , ssl_verify = get_creds(splunk_service)
+    cb_server, token, ssl_verify = get_creds(splunk_service)
     return CbEnterpriseResponseAPI(token=token, url=cb_server, ssl_verify=ssl_verify)
 
 
@@ -113,15 +111,15 @@ class CbSearchCommand2(EventingCommand):
         return data_dict
 
     def generate_result(self, data):
-        rawdata = dict( (field_name, getattr(data, field_name, "")) for field_name in self.field_names)
-        squashed_data = self.squash_data( self.process_data(rawdata) )
+        rawdata = dict((field_name, getattr(data, field_name, "")) for field_name in self.field_names)
+        squashed_data = self.squash_data(self.process_data(rawdata))
         return {'sourcetype': 'bit9:carbonblack:json', '_time': time.time(),
                 'source': self.cb_url, '_raw': squashed_data}
 
     def transform(self, results):
         if not self.setup_complete:
             yield self.error_event("Error: {0}".format(self.error_text))
-            return                                    # explicitly stop the generator on prepare() error
+            return  # explicitly stop the generator on prepare() error
 
         try:
             query = self.cb.select(self.search_cls)
@@ -139,19 +137,19 @@ class CbSearchCommand2(EventingCommand):
 
 
 def setup_logger():
-   """
+    """
    Setup a logger for the REST handler.
    """
 
-   logger = logging.getLogger('da-ess-cbresponse')
-   logger.setLevel(logging.DEBUG)
+    logger = logging.getLogger('da-ess-cbresponse')
+    logger.setLevel(logging.DEBUG)
 
-   file_handler = logging.handlers.RotatingFileHandler(
-     make_splunkhome_path(['var', 'log', 'splunk', 'da-ess-cbresponse.log']),
-     maxBytes=25000000, backupCount=5)
-   formatter = logging.Formatter('%(asctime)s %(lineno)d %(levelname)s %(message)s')
-   file_handler.setFormatter(formatter)
+    file_handler = logging.handlers.RotatingFileHandler(
+        make_splunkhome_path(['var', 'log', 'splunk', 'da-ess-cbresponse.log']),
+        maxBytes=25000000, backupCount=5)
+    formatter = logging.Formatter('%(asctime)s %(lineno)d %(levelname)s %(message)s')
+    file_handler.setFormatter(formatter)
 
-   logger.addHandler(file_handler)
+    logger.addHandler(file_handler)
 
-   return logger
+    return logger
