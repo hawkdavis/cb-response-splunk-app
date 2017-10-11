@@ -11,17 +11,6 @@ import os
 
 import logging
 
-'''
-logger = logging.getLogger('cbhelpers.py')
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler(os.environ['SPLUNK_HOME']+'/var/log/splunk/cbhelpers.log')
-fh.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s | src="%(name)s" | lvl="%(levelname)s" | msg="%(message)s"')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-logger.info("CBHELPERS LOG!")
-'''
-
 
 class CredentialMissingError(Exception):
     pass
