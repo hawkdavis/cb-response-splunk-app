@@ -282,7 +282,9 @@ define(
                                 if (err){
                                     reject(err);
                                 }
-                                    resolve(reject);
+                                else {
+                                    resolve(entity);
+                                }
                             });
                         });
                 }
