@@ -3,6 +3,9 @@
 define(
     ["backbone", "jquery", "splunkjs/splunk"],
     function(Backbone, jquery, splunk_js_sdk) {
+        function escape(str) {
+            return jquery('<div/>').text(str).html();
+        }
         sdk = splunk_js_sdk;
         var ExampleView = Backbone.View.extend({
             // -----------------------------------------------------------------
@@ -48,7 +51,7 @@ define(
                     var tablehtml = connectorstable.html();
                     tablehtml +=  "<thead><th>Category</th><th>Connectors</th></tr></thead>";
                     for (var i = 0 ; i < categories.length; i++){
-                        var cat = categories[i];
+                        var cat = escape(categories[i]);
                         tablehtml +=  '<tr id="'+cat+'"><td>'+cat+'</td><td><ul class="comma-list" id="'+cat+'data"></ul></td></tr>';
                     }
                     connectorstable.html(tablehtml);
@@ -61,9 +64,8 @@ define(
                             var partner = (display && display != undefined) ? display : fp['partner'];
                             var cats = fp['cat'];
                             var connector = fp['connector'];
-                            var link = "https://www.github.com/carbonblack/cb-"+connector+"-connector";
-                            link = encodeURI(link);
-                            var linkhtml = '<li><a href="'+link+' "target="_blank">'+partner+'</a></li>';
+                            var link = "https://www.github.com/carbonblack/cb-"+encodeURI(connector)+"-connector";
+                            var linkhtml = '<li><a href="'+escape(link)+' "target="_blank">'+escape(partner)+'</a></li>';
                             for (var j = 0 ; j < cats.length ; j++) {
                                 var cell = jquery("#"+cats[j]+"data");
                                 if (cell) {
@@ -688,7 +690,7 @@ define(
                     new_error_output_string += "<ul>";
                     for (var index = 0; index < error_messages.length; index++) {
                         new_error_output_string +=
-                            "<li>" + error_messages[index] + "</li>";
+                            "<li>" + escape(error_messages[index]) + "</li>";
                     }
                     new_error_output_string += "</ul>";
                     error_output_element.html(new_error_output_string);
@@ -763,7 +765,6 @@ define(
                     "            <h3>Or <a href='https://community.carbonblack.com/community/ecosystem/create-idea!input.jspa?containerID=2043&containerType=14' target='_blank'>community.carbonblack.com</a> to suggest a new one !</h3> " +
                     "        </div>" +
                     "    </div>" +
-                        " <div id='replacediv'> </div>" +
                     "</div>";
 
                 return template_string;
