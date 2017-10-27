@@ -45,14 +45,12 @@ define(
                         }
                     }
                     var connectorstable = jquery("#connectorstable");
-                    var replacediv = jquery("#replacediv");
                     var tablehtml = connectorstable.html();
                     tablehtml +=  "<thead><th>Category</th><th>Connectors</th></tr></thead>";
                     for (var i = 0 ; i < categories.length; i++){
                         var cat = categories[i];
                         tablehtml +=  '<tr id="'+cat+'"><td>'+cat+'</td><td><ul class="comma-list" id="'+cat+'data"></ul></td></tr>';
                     }
-                    tablehtml = replacediv.text(tablehtml).html();
                     connectorstable.html(tablehtml);
                     if (found_partners.length >= 1 ){
                         for (var i = 0 ; i < found_partners.length ; i++)
@@ -71,7 +69,6 @@ define(
                                 if (cell) {
                                     console.log("Trying to update category : #" + cats[j] + "data");
                                     var linkcopy = linkhtml + cell.html();
-                                    linkcopy = replacediv.text(linkcopy).html();
                                     cell.html(linkcopy);
                                 }
                             }
@@ -686,7 +683,6 @@ define(
                 var did_error_messages_occur = error_messages.length > 0;
 
                 var error_output_element = jquery(".setup.container .error.output");
-                var replacediv = jquery("#replacediv");
                 if (did_error_messages_occur) {
                     var new_error_output_string = "";
                     new_error_output_string += "<ul>";
@@ -695,7 +691,6 @@ define(
                             "<li>" + error_messages[index] + "</li>";
                     }
                     new_error_output_string += "</ul>";
-                    new_error_output_string = replacediv.text(new_error_output_string).html();
                     error_output_element.html(new_error_output_string);
                     error_output_element.stop();
                     error_output_element.fadeIn();
