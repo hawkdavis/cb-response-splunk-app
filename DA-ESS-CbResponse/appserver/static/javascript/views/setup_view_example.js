@@ -3,8 +3,21 @@
 define(
     ["backbone", "jquery", "splunkjs/splunk"],
     function(Backbone, jquery, splunk_js_sdk) {
-        function escape(str) {
-            return jquery('<div/>').text(str).html();
+        var entityMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;'
+        };
+
+        function escape(string) {
+            return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+                return entityMap[s];
+            });
         }
         sdk = splunk_js_sdk;
         var ExampleView = Backbone.View.extend({
