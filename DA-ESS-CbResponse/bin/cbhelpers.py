@@ -112,7 +112,7 @@ class CbSearchCommand2(EventingCommand):
 
         try:
             query = self.cb.select(self.search_cls)
-            if self.query:
+            if self.query is not None:
                 query = query.where(self.query)
 
             for result in query[:int(self.max_result_rows)]:
@@ -121,7 +121,7 @@ class CbSearchCommand2(EventingCommand):
 
         except Exception as e:
             yield self.error_event("error searching for {0} in Cb Response: {1}".format(self.query, str(e)),
-                                   stacktrace=traceback.format_stack())
+                                   stacktrace=traceback.format_exc())
             return
 
 
