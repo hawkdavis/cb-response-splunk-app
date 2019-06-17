@@ -107,6 +107,7 @@ class IsolateSensorAction(ModularAction):
             return False
 
         ip_or_hostname = result.get(ip_field_name, None)
+        logger.info(result)
         if not ip_or_hostname:
             self.error("No value found in the result for field name {0}".format(ip_field_name))
             return False
