@@ -1,6 +1,8 @@
 from cbhelpers import CbSearchCommand2
 from cbapi.response import Process
 
+import datetime
+
 import sys
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option
 import logging
@@ -42,7 +44,7 @@ class ProcessSearchCommand(CbSearchCommand2):
     def generate_result(self, data):
         result = super(ProcessSearchCommand, self).generate_result(data)
         result['link_process'] = data.webui_link
-        result['_time'] = data.last_update.strftime('%S')
+        result['_time'] = (data.last_update - datetime.datetime(1970,1,1)).total_seconds()
         return result
 
 
