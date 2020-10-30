@@ -1,24 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<nav color="#43434A">
-    <collection label="Cb Response">
-        <view name="overview" default='true'/>
-        <view name="carbonblack-binary" default='false'/>
-        <view name="carbonblack-process" default='false'/>
-        <view name="carbonblack-process-timeline" default='false'/>
-        <view name="carbonblack-sensor" default="false"/>
-        <view name="endpoint-status" default="false"/>
-        <view name="network-map" default="false"/>
-        <view name="binary-status" default="false"/>
-        <view name="system-check" default="false"/>
-    </collection>
-
-
-    <collection label="Splunk">
-        <view name="search"/>
-        <view name="pivot"/>
-        <view name="reports"/>
-        <view name="alerts"/>
-        <view name="dashboards"/>
-    </collection>
-
+<nav search_view="search" color="#43434A">
+  <view name="overview" default='true'/>
+  <collection label="Cb Response">
+    <view name="carbonblack-binary" />
+    <view name="carbonblack-process" />
+    <view name="carbonblack-process-timeline" />
+    <view name="carbonblack-sensor" />
+    <view name="endpoint-status" />
+    <view name="network-map" />
+    <view name="binary-status" />
+    <view name="system-check" />
+  </collection>
+  <collection label="Splunk">
+    <view name="search"/>
+    <view name="pivot"/>
+    <view name="reports"/>
+    <view name="alerts"/>
+    <view name="dashboards"/>
+  </collection>
 </nav>
+
